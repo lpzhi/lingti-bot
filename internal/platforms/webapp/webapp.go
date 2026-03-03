@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"strings"
 	"sync"
@@ -93,17 +94,33 @@ func (p *Platform) Start(ctx context.Context) error {
 	mux.HandleFunc("/", p.serveIndex)
 	mux.HandleFunc("/ws", p.serveWS)
 
-	p.server = &http.Server{
-		Addr:    fmt.Sprintf(":%d", p.cfg.Port),
-		Handler: mux,
+	// Try ports starting from cfg.Port, incrementing until one is free.
+	port := p.cfg.Port
+	const maxTries = 100
+	var ln net.Listener
+	var err error
+	for range maxTries {
+		ln, err = net.Listen("tcp", fmt.Sprintf(":%d", port))
+		if err == nil {
+			break
+		}
+		log.Printf("webapp: port %d in use, trying %d", port, port+1)
+		port++
+	}
+	if err != nil {
+		return fmt.Errorf("webapp: could not bind to any port in range %d-%d", p.cfg.Port, port)
 	}
 
+	p.cfg.Port = port // update so Stop/logs reflect actual port
+	p.server = &http.Server{Handler: mux}
+
 	go func() {
-		if err := p.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := p.server.Serve(ln); err != nil && err != http.ErrServerClosed {
 			log.Printf("webapp: server error: %v", err)
 		}
 	}()
 
+	log.Printf("webapp: listening on http://localhost:%d", port)
 	return nil
 }
 

@@ -909,7 +909,6 @@ func runRouter(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 		r.Register(webappPlatform)
-		logger.Info("Web chat UI: http://localhost:%d", webappPort)
 	}
 
 	// Start the router
