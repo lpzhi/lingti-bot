@@ -10,7 +10,7 @@ English | [中文](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-cli.lingti.com-blue?style=flat)](https://cli.lingti.com/bot)
 
-**Lingti Bot** is an all-in-one AI Bot platform featuring **MCP Server**, **multi-platform messaging gateway**, **rich toolset**, **intelligent conversation**, and **voice interaction**.
+**Lingti Bot** is an all-in-one AI Bot platform featuring \*\*MCP Server\*\*, \*\*multi-platform messaging gateway\*\*, \*\*rich toolset\*\*, and \*\*intelligent conversation\*\*.
 
 **Core Advantages:**
 - 🚀 **Zero Dependency** — Single 30MB binary, no Node.js/Python runtime needed, just `scp` and run

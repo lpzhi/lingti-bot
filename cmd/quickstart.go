@@ -25,14 +25,11 @@ Usage modes:
        }
      }
 
-  2. Voice Assistant (talk to AI in your terminal):
-     lingti-bot setup         # Install voice dependencies (first time)
-     lingti-bot talk          # Start voice conversation
 
-  3. Cloud Relay (connect to Lingti cloud for Feishu/Slack bots):
+  2. Cloud Relay (connect to Lingti cloud for Feishu/Slack bots):
      lingti-bot relay         # Connect to cloud relay service
 
-  4. Message Router (self-hosted Slack/Feishu/Telegram bots):
+  3. Message Router (self-hosted Slack/Feishu/Telegram bots):
      export ANTHROPIC_API_KEY="your-key"
      lingti-bot router
 
