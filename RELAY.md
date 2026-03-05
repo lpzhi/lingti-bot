@@ -28,7 +28,40 @@
 
 ## 快速开始
 
-### 微信公众号——最简单的入口
+### Bot Page——无需任何平台账号，三步搞定
+
+这是上手 lingti-bot 最简单的方式。无需注册任何聊天平台，打开浏览器就能用。
+
+**第一步：配置 AI**
+
+```bash
+lingti-bot agents add mybot \
+  --provider minimax \
+  --api-key your-minimax-api-key \
+  --default
+```
+
+**第二步：启动云中继**
+
+```bash
+lingti-bot relay
+```
+
+启动后终端会打印你的专属链接：
+
+```
+[Relay] Your bot page: https://bot.lingti.com/bots/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
+**第三步：打开网页开始聊天**
+
+在浏览器中打开上面打印的链接，即可直接与你的 AI bot 对话。无需登录，无需安装任何 App。
+
+> 把链接分享给任何人，他们都能打开多标签对话界面与你的 bot 聊天。UUID 既是标识符也是访问凭证，请像对待密码一样保管。
+
+---
+
+### 微信公众号
 
 微信搜索公众号 **灵缇小秘**，关注后发送任意消息获取你的 `user-id`，然后：
 
