@@ -10,6 +10,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/google/uuid"
 	"github.com/pltanton/lingti-bot/internal/agent"
 	"github.com/pltanton/lingti-bot/internal/browser"
 	"github.com/pltanton/lingti-bot/internal/config"
@@ -40,10 +41,11 @@ import (
 )
 
 var (
-	gatewayAddr       string
-	gatewayAuthToken  string
-	gatewayAuthTokens []string
-	gatewayNoWS       bool
+	gatewayAddr          string
+	gatewayAuthToken     string
+	gatewayAuthTokens    []string
+	gatewayNoWS          bool
+	gatewayRefreshBotID  bool
 )
 
 // Platform credential vars — used by gateway and the deprecated router alias.
@@ -173,6 +175,7 @@ func init() {
 	gatewayCmd.Flags().StringVar(&gatewayAuthToken, "auth-token", "", "Single authentication token (or GATEWAY_AUTH_TOKEN env)")
 	gatewayCmd.Flags().StringSliceVar(&gatewayAuthTokens, "auth-tokens", nil, "Multiple authentication tokens (or GATEWAY_AUTH_TOKENS env)")
 	gatewayCmd.Flags().BoolVar(&gatewayNoWS, "no-ws", false, "Disable WebSocket server")
+	gatewayCmd.Flags().BoolVar(&gatewayRefreshBotID, "refresh-bot-id", false, "Generate a new bot ID (invalidates existing share links)")
 
 	gatewayCmd.Flags().StringVar(&aiProvider, "provider", "", "AI provider: claude, deepseek, kimi, qwen (or AI_PROVIDER env)")
 	gatewayCmd.Flags().StringVar(&aiAPIKey, "api-key", "", "AI API Key (or AI_API_KEY env)")
@@ -259,6 +262,17 @@ func runGateway(cmd *cobra.Command, args []string) {
 	savedCfg, cfgErr := config.Load()
 	if cfgErr == nil {
 		applyRouterConfigFallbacks(savedCfg)
+	}
+
+	// Generate or refresh bot ID
+	if cfgErr == nil {
+		if gatewayRefreshBotID || savedCfg.BotID == "" {
+			savedCfg.BotID = uuid.New().String()
+			if err := savedCfg.Save(); err != nil {
+				fmt.Fprintf(os.Stderr, "Warning: failed to save bot ID: %v\n", err)
+			}
+		}
+		fmt.Printf("[Gateway] Your bot page: https://bot.lingti.com/bots/%s\n", savedCfg.BotID)
 	}
 
 	debugEnabled := logger.IsDebug()

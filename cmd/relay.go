@@ -12,6 +12,7 @@ import (
 	"syscall"
 
 	"github.com/pltanton/lingti-bot/internal/agent"
+	"github.com/google/uuid"
 	"github.com/pltanton/lingti-bot/internal/agent/mcpclient"
 	"github.com/pltanton/lingti-bot/internal/config"
 	cronpkg "github.com/pltanton/lingti-bot/internal/cron"
@@ -267,14 +268,25 @@ func runRelay(cmd *cobra.Command, args []string) {
 		if relayWeChatAppSecret == "" {
 			relayWeChatAppSecret = savedCfg.Platforms.WeChat.AppSecret
 		}
+
+		// Generate bot ID if not already set
+		if savedCfg.BotID == "" {
+			savedCfg.BotID = uuid.New().String()
+			if err := savedCfg.Save(); err != nil {
+				fmt.Fprintf(os.Stderr, "Warning: failed to save bot ID: %v\n", err)
+			}
+		}
+		fmt.Printf("[Relay] Your bot page: https://bot.lingti.com/bots/%s\n", savedCfg.BotID)
 	}
 
 	// Validate required parameters
-	if relayPlatform == "" {
+	// Platform is optional when a bot_id is configured (bot-page-only mode)
+	hasBotID := cfgErr == nil && savedCfg.BotID != ""
+	if relayPlatform == "" && !hasBotID {
 		fmt.Fprintln(os.Stderr, "Error: --platform is required (feishu, slack, wechat, or wecom)")
 		os.Exit(1)
 	}
-	if relayPlatform != "feishu" && relayPlatform != "slack" && relayPlatform != "wechat" && relayPlatform != "wecom" {
+	if relayPlatform != "" && relayPlatform != "feishu" && relayPlatform != "slack" && relayPlatform != "wechat" && relayPlatform != "wecom" {
 		fmt.Fprintln(os.Stderr, "Error: --platform must be 'feishu', 'slack', 'wechat', or 'wecom'")
 		os.Exit(1)
 	}
@@ -398,6 +410,10 @@ func runRelay(cmd *cobra.Command, args []string) {
 	}
 
 	// Create and register relay platform
+	var relayBotID string
+	if cfgErr == nil {
+		relayBotID = savedCfg.BotID
+	}
 	relayPlatformInstance, err := relay.New(relay.Config{
 		UserID:       relayUserID,
 		Platform:     relayPlatform,
@@ -405,6 +421,7 @@ func runRelay(cmd *cobra.Command, args []string) {
 		WebhookURL:   relayWebhookURL,
 		AIProvider:   providerName,
 		AIModel:      modelName,
+		BotID:        relayBotID,
 		WeComCorpID:     relayWeComCorpID,
 		WeComAgentID:    relayWeComAgentID,
 		WeComSecret:     relayWeComSecret,

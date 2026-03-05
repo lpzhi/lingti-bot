@@ -22,6 +22,7 @@ type Config struct {
 	Browser   BrowserConfig             `yaml:"browser,omitempty"`
 	Agents    []AgentEntry              `yaml:"agents,omitempty"`
 	Bindings  []AgentBinding            `yaml:"bindings,omitempty"`
+	BotID     string                    `yaml:"bot_id,omitempty"`
 }
 
 // ProviderEntry defines a named AI provider configuration.
