@@ -162,15 +162,41 @@ Agent "lingti" added (workspace: ~/.lingti/agents/lingti)
 ### 管理 Channels
 
 ```bash
-# 交互式添加 Channel（绑定平台 + Agent）
+# 交互式添加 Channel 凭证（保存到 ~/.lingti.yaml）
 lingti-bot channels add
 
-# 列出所有 Channel
+# 列出所有已配置的 Channel
 lingti-bot channels list
 
 # 删除 Channel
 lingti-bot channels remove <name>
 ```
+
+### 添加 Channel 后如何启动？
+
+Channel 凭证保存到 `~/.lingti.yaml` 后，根据平台类型选择启动命令：
+
+**`gateway` 模式**（适用于大多数平台：Telegram、Discord、Slack、钉钉、飞书等）
+
+`gateway` 自动读取配置文件中所有已配置的平台，一条命令全部启动：
+
+```bash
+lingti-bot gateway
+```
+
+**`relay` 模式**（仅适用于需要云中继的平台：企业微信、微信公众号、飞书、Slack）
+
+`relay` 通过云中继服务器转发消息，需用 `--platform` 指定平台：
+
+```bash
+lingti-bot relay --platform wecom    # 企业微信
+lingti-bot relay --platform feishu   # 飞书
+lingti-bot relay --platform wechat   # 微信公众号
+```
+
+> **一句话区别：**
+> - `gateway` — 本地直连，支持所有平台，凭证来自配置文件，一条命令启动全部
+> - `relay` — 云中继，仅支持 wecom/feishu/wechat/slack，无需公网服务器
 
 ---
 

@@ -93,6 +93,32 @@ User → Platform → lingti-bot Cloud (bot.lingti.com) ←WebSocket→ lingti-b
 
 You run `lingti-bot relay` locally. The cloud server handles the platform connection and forwards messages to your local instance via WebSocket.
 
+## After `channels add` — which command to run?
+
+`lingti-bot channels add` saves platform credentials to `~/.lingti.yaml`. After that:
+
+| Platform | Command |
+|----------|---------|
+| Telegram, Discord, DingTalk, WhatsApp, LINE, Teams, etc. | `lingti-bot gateway` |
+| WeCom (企业微信) | `lingti-bot relay --platform wecom` |
+| WeChat (微信公众号) | `lingti-bot relay --platform wechat` |
+| Feishu (飞书) | `lingti-bot gateway` or `lingti-bot relay --platform feishu` |
+| Slack | `lingti-bot gateway` or `lingti-bot relay --platform slack` |
+
+**`gateway`** reads all credentials from `~/.lingti.yaml` automatically — no extra flags needed:
+
+```bash
+lingti-bot gateway
+```
+
+**`relay`** requires `--platform` because the cloud relay needs to know which platform to connect:
+
+```bash
+lingti-bot relay --platform wecom
+```
+
+If you've also run `lingti-bot agents add`, you don't need `--provider` or `--api-key` flags — the default agent's config is used automatically.
+
 ## Summary
 
 - **gateway**: Full control, all platforms, may need a server/tunnel
